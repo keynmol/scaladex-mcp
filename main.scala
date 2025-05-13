@@ -1,8 +1,10 @@
 //> using dep com.indoorvivants::mcp-quick::0.1.2
-//> using dep com.softwaremill.sttp.client4::core::4.0.3
+//> using dep com.softwaremill.sttp.client4::core::4.0.5
 //> using scala 3.7.0
 
 import mcp.*
+import sttp.client4.DefaultSyncBackend
+import sttp.client4.SyncBackend
 
 /** This is a simple MCP server that exposes two tools that interact with
   * Scaladex
@@ -89,11 +91,9 @@ import mcp.*
           )
     .run(SyncTransport.default.verbose)
 
-object scaladex:
+class scaladex(backend: SyncBackend):
 
   import sttp.client4.*
-
-  val backend = DefaultSyncBackend()
 
   def search(
       query: String,
@@ -104,6 +104,7 @@ object scaladex:
       .get(
         uri"https://index.scala-lang.org/api/search?q=$query&target=${platform.getOrElse("JVM")}&scalaVersion=${scalaVersion.getOrElse("3")}"
       )
+      .header("User-Agent", "sttp-curl/8.7.1")
       .send(backend)
       .body
       .fold(sys.error(_), identity)
@@ -113,8 +114,11 @@ object scaladex:
       .get(
         uri"https://index.scala-lang.org/api/project?organization=$organization&repository=$repository"
       )
+      .header("User-Agent", "sttp-curl/8.7.1")
       .send(backend)
       .body
       .fold(sys.error(_), identity)
 
 end scaladex
+
+object scaladex extends scaladex(DefaultSyncBackend())
