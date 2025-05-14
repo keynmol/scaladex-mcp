@@ -1,7 +1,3 @@
-//> using dep com.indoorvivants::mcp-quick::0.1.2
-//> using dep com.softwaremill.sttp.client4::core::4.0.5
-//> using scala 3.7.0
-
 import mcp.*
 import sttp.client4.DefaultSyncBackend
 import sttp.client4.SyncBackend
